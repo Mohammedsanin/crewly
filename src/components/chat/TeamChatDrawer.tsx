@@ -261,25 +261,6 @@ export const TeamChatDrawer: React.FC<TeamChatDrawerProps> = ({ isOpen, onClose 
                               </div>
                               <div className="flex items-center gap-1.5 shrink-0">
                                 {getConnectionBadge(emp.id)}
-                                {(currentUser?.role === 'Admin' || currentUser?.id === 'emp-developer-master') && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setCurrentUser({
-                                        id: emp.id,
-                                        name: emp.name,
-                                        email: emp.email,
-                                        role: (emp.role === 'Admin' || emp.role === 'Manager' ? emp.role : 'Manager') as any,
-                                        avatar: emp.avatar || '',
-                                      });
-                                      setActiveChannel('#general');
-                                    }}
-                                    className="p-1 rounded-md hover:bg-slate-200 text-slate-400 hover:text-indigo-650 transition-colors cursor-pointer"
-                                    title={`Switch to ${emp.name} (Dev Helper)`}
-                                  >
-                                    <LogIn className="w-3 h-3" />
-                                  </button>
-                                )}
                               </div>
                             </div>
                           </div>

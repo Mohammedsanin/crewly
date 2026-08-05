@@ -21,7 +21,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose }) =
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<Priority>('medium');
   const [status, setStatus] = useState<TaskStatus>('todo');
-  const [assignedTo, setAssignedTo] = useState(realEmployees[0]?.name || 'sanin');
+  const [assignedTo, setAssignedTo] = useState(realEmployees[0]?.name || 'Sarah Chen');
   const [selectedClientId, setSelectedClientId] = useState<string>('');
   const [dueDate, setDueDate] = useState('2026-07-28');
   const [tagsInput, setTagsInput] = useState('Frontend, UI/UX');
@@ -180,7 +180,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose }) =
                         </option>
                       ))
                     ) : (
-                      <option value="sanin">sanin (Engineering)</option>
+                      <option value="Sarah Chen">Sarah Chen (Engineering)</option>
                     )}
                   </select>
                 </div>

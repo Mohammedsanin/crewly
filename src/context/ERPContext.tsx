@@ -137,10 +137,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const parsed = JSON.parse(saved);
         if (
           parsed &&
-          parsed.email !== 'saninmohammed03@gmail.com' &&
           parsed.email !== 'admin@crewly.io' &&
-          parsed.name !== 'Sanin' &&
-          parsed.name !== 'Saninmohammed03' &&
           parsed.name !== 'Sarah Chen' &&
           !parsed.id?.startsWith('usr-')
         ) {
@@ -222,8 +219,6 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(parsed)) {
           const cleaned = parsed.filter(
             (e) =>
-              e.id !== 'emp-sanin-system-admin' &&
-              e.email !== 'admin@syncwave.io' &&
               e.name !== 'Alex Vance' &&
               e.name !== 'Sarah Chen' &&
               !e.id?.startsWith('usr-')
@@ -277,9 +272,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             if (recentlyDeleted && now - Number(recentlyDeleted) < 15000) {
               return false;
             }
-            return e.id !== 'emp-sanin-system-admin' &&
-              e.email !== 'admin@syncwave.io' &&
-              e.name !== 'Alex Vance' &&
+            return e.name !== 'Alex Vance' &&
               e.name !== 'Sarah Chen' &&
               !e.id?.startsWith('usr-');
           }
@@ -417,14 +410,8 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, []);
 
-  // Ensure task assignees are preserved correctly without forced overrides
   useEffect(() => {
-    // Legacy migration only for obsolete Sarah Chen assignments
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.assignedTo === 'Sarah Chen' ? { ...t, assignedTo: 'sanin' } : t
-      )
-    );
+    // No legacy migrations needed in production
   }, []);
 
   const clearAllData = () => {

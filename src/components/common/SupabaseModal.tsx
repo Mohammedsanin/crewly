@@ -101,7 +101,7 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 INSERT INTO public.employees (id, name, email, role, department, status, avatar, password)
-VALUES ('emp-sanin', 'Sanin', 'saninmohammed03@gmail.com', 'Admin / Lead Architect', 'Engineering', 'active', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80', 'admin123')
+VALUES ('emp-developer-master', 'Developer', 'developer@crewly.io', 'Admin', 'Engineering', 'active', '', 'developer')
 ON CONFLICT (email) DO UPDATE SET password = EXCLUDED.password, role = EXCLUDED.role, status = 'active';`;
 
     navigator.clipboard.writeText(sql);

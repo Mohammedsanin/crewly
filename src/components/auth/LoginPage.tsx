@@ -6,8 +6,8 @@ import { User } from '../../types';
 
 export const LoginPage: React.FC = () => {
   const { setCurrentUser, setActiveRolePerspective, employees, addEmployee, createCompanyWorkspace } = useERP();
-  const [email, setEmail] = useState('saninmohammed03@gmail.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -613,7 +613,7 @@ export const LoginPage: React.FC = () => {
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Sanin Mohammed"
+                        placeholder="e.g. Alex Rivera"
                         value={headName}
                         onChange={(e) => setHeadName(e.target.value)}
                         className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100/50 transition-all"
@@ -626,7 +626,7 @@ export const LoginPage: React.FC = () => {
                         <input
                           type="email"
                           required
-                          placeholder="saninmohammed03@gmail.com"
+                          placeholder="admin@crewly.io"
                           value={headEmail}
                           onChange={(e) => setHeadEmail(e.target.value)}
                           className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100/50 transition-all"

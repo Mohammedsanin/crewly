@@ -119,9 +119,7 @@ export const syncEmployeesFromSupabase = async (): Promise<Employee[] | null> =>
     const { data, error } = await client.from('employees').select('*');
     if (error) throw error;
     if (!data) return null;
-    return data
-      .filter((row: any) => row.id !== 'emp-sanin-system-admin' && row.email !== 'admin@syncwave.io')
-      .map((row: any) => ({
+    return data.map((row: any) => ({
         id: row.id,
         name: row.name,
         email: row.email,

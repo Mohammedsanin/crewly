@@ -18,8 +18,10 @@ export const FinancialsView: React.FC = () => {
   const { clients, employees } = useERP();
   const [activeChartTab, setActiveChartTab] = useState<'annual' | 'quarterly' | 'margin'>('annual');
   const [hoveredMonth, setHoveredMonth] = useState<number | null>(null);
+  const [projectionMultiplier, setProjectionMultiplier] = useState(1.0);
 
-  const totalARR = clients.reduce((acc, c) => acc + c.contractValue, 0);
+  const baseARR = clients.reduce((acc, c) => acc + c.contractValue, 0);
+  const totalARR = baseARR * projectionMultiplier;
 
   // Derive monthly burn from employee headcount (rough estimate ₹80k/emp/month)
   const monthlyBurn = employees.length * 80000;
@@ -102,7 +104,7 @@ export const FinancialsView: React.FC = () => {
     printWindow.document.write(`
       <html>
         <head>
-          <title>Invoice ${invoiceNum} - Syncwave</title>
+          <title>Invoice ${invoiceNum} - Crewly</title>
           <style>
             body {
               font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -228,7 +230,7 @@ export const FinancialsView: React.FC = () => {
         <body>
           <div class="header-container">
             <div class="logo-box">
-              <h1>SYNCWAVE</h1>
+              <h1>Crewly</h1>
               <p>Quarterly Enterprise Billing Statement</p>
             </div>
             <div class="inv-meta">
@@ -242,10 +244,10 @@ export const FinancialsView: React.FC = () => {
           <div class="address-block">
             <div class="address-box">
               <h3>Billed By</h3>
-              <p><strong>SYNCWAVE Technologies Inc.</strong></p>
+              <p><strong>Crewly Technologies Inc.</strong></p>
               <p>742 Evergreen Terrace</p>
               <p>San Francisco, CA 94107</p>
-              <p>billing@syncwave.io</p>
+              <p>billing@crewly.io</p>
             </div>
             <div class="address-box">
               <h3>Billed To</h3>
@@ -309,7 +311,7 @@ export const FinancialsView: React.FC = () => {
           </div>
 
           <div class="footer">
-            <p>Thank you for partnering with SYNCWAVE. For support queries, email support@syncwave.io.</p>
+            <p>Thank you for partnering with Crewly. For support queries, email support@crewly.io.</p>
             <p style="font-size: 10px; margin-top: 4px;">Computer-generated statement. No physical signature required.</p>
           </div>
 
@@ -331,7 +333,7 @@ export const FinancialsView: React.FC = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `syncwave_financial_export_${Date.now()}.csv`);
+    link.setAttribute('download', `crewly_financial_export_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -459,24 +461,43 @@ export const FinancialsView: React.FC = () => {
             <p className="text-xs text-slate-500">Interactive revenue flow vs monthly corporate overhead burn</p>
           </div>
 
-          {/* Interactive Chart Metric Tabs */}
-          <div className="flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200 shrink-0">
-            {(['annual', 'quarterly', 'margin'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => {
-                  setActiveChartTab(tab);
-                  setHoveredMonth(null);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  activeChartTab === tab ? 'bg-white text-indigo-700 shadow-xs' : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                {tab === 'annual' && 'Monthly Performance'}
-                {tab === 'quarterly' && 'Quarterly Aggregate'}
-                {tab === 'margin' && 'Margin Analysis'}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {/* ARR Growth Simulation Slider */}
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1 rounded-xl shadow-3xs">
+              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider whitespace-nowrap">ARR Growth:</span>
+              <input
+                type="range"
+                min="0.5"
+                max="2.0"
+                step="0.05"
+                value={projectionMultiplier}
+                onChange={(e) => setProjectionMultiplier(parseFloat(e.target.value))}
+                className="w-20 accent-indigo-600 h-1 bg-slate-200 rounded-lg cursor-pointer shrink-0"
+              />
+              <span className="text-xs font-black text-indigo-700 font-mono w-10 text-right">
+                {Math.round((projectionMultiplier - 1) * 100)}%
+              </span>
+            </div>
+
+            {/* Interactive Chart Metric Tabs */}
+            <div className="flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200 shrink-0">
+              {(['annual', 'quarterly', 'margin'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => {
+                    setActiveChartTab(tab);
+                    setHoveredMonth(null);
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeChartTab === tab ? 'bg-white text-indigo-700 shadow-xs' : 'text-slate-500 hover:text-slate-700'
+                  }`}
+                >
+                  {tab === 'annual' && 'Monthly Performance'}
+                  {tab === 'quarterly' && 'Quarterly Aggregate'}
+                  {tab === 'margin' && 'Margin Analysis'}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

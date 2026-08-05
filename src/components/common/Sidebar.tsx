@@ -11,6 +11,7 @@ import {
   Bot,
   Shield,
   Sparkles,
+  MessageSquare,
 } from 'lucide-react';
 import { useERP } from '../../context/ERPContext';
 import { NavigationTab } from '../../types';
@@ -26,9 +27,10 @@ interface NavItem {
 
 interface SidebarProps {
   onOpenAIAssistant: () => void;
+  onOpenChat: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onOpenAIAssistant }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ onOpenAIAssistant, onOpenChat }) => {
   const {
     activeTab,
     setActiveTab,
@@ -100,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenAIAssistant }) => {
             className="relative group cursor-pointer p-1"
           >
             <div className="w-9 h-9 rounded-2xl bg-indigo-50 border border-indigo-200/60 p-1.5 shadow-xs flex items-center justify-center overflow-hidden">
-              <img src={companyInfo.logo || "/logo_mark.png"} alt="Company Logo" className="w-full h-full object-contain" />
+              <img src={companyInfo.logo || "/logo.png"} alt="Company Logo" className="w-full h-full object-contain" />
             </div>
           </motion.div>
 
@@ -225,6 +227,42 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenAIAssistant }) => {
 
         {/* Bottom Section: AI Copilot & User Profile Avatar */}
         <div className="flex flex-col items-center gap-3 w-full">
+          {/* Team Chat Icon Button */}
+          <div
+            className="relative flex justify-center w-full"
+            onMouseEnter={() => setHoveredId('chat')}
+            onMouseLeave={() => setHoveredId(null)}
+          >
+            <motion.button
+              whileHover={{ scale: 1.15, rotate: -6 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={onOpenChat}
+              className="w-10 h-10 rounded-2xl bg-slate-50 hover:bg-indigo-50 text-slate-450 hover:text-indigo-650 flex items-center justify-center border border-slate-200 transition-all cursor-pointer shadow-3xs"
+            >
+              <MessageSquare className="w-4 h-4" />
+            </motion.button>
+
+            {/* Floating Chat Tooltip */}
+            <AnimatePresence>
+              {hoveredId === 'chat' && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: -10, scale: 0.9 }}
+                  transition={{ type: 'spring', stiffness: 450, damping: 25 }}
+                  onClick={onOpenChat}
+                  className="absolute left-full ml-4 top-1/2 -translate-y-1/2 bg-slate-900 text-white rounded-2xl shadow-2xl px-3.5 py-2 z-50 whitespace-nowrap cursor-pointer"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
+                    <p className="text-xs font-extrabold text-white">Team Chat</p>
+                  </div>
+                  <p className="text-[10px] text-indigo-300 font-semibold">Click to open messaging</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           {/* AI Copilot Icon Button */}
           <div
             className="relative flex justify-center w-full"
@@ -253,7 +291,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenAIAssistant }) => {
                 >
                   <div className="flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-spin" />
-                    <p className="text-xs font-extrabold text-white">SYNCWAVE AI Copilot</p>
+                    <p className="text-xs font-extrabold text-white">Crewly AI Copilot</p>
                   </div>
                   <p className="text-[10px] text-indigo-300 font-semibold">Click to ask assistant</p>
                 </motion.div>

@@ -120,13 +120,13 @@ CREATE TABLE IF NOT EXISTS public.task_comments (
 -- 3.8 COMPANY PROFILE TABLE
 CREATE TABLE IF NOT EXISTS public.company_profile (
   id TEXT PRIMARY KEY DEFAULT 'comp-main',
-  name TEXT NOT NULL DEFAULT 'SYNCWAVE Technologies Inc.',
-  logo TEXT DEFAULT '/logo_mark.png',
+  name TEXT NOT NULL DEFAULT 'Crewly Technologies Inc.',
+  logo TEXT DEFAULT '/logo.png',
   legal_address TEXT DEFAULT '742 Evergreen Terrace, San Francisco, CA 94107',
   tax_id TEXT DEFAULT 'US-9842104-X',
-  contact_email TEXT DEFAULT 'contact@syncwave.io',
+  contact_email TEXT DEFAULT 'contact@crewly.io',
   contact_phone TEXT DEFAULT '+1 (555) 234-5678',
-  website TEXT DEFAULT 'https://syncwave.io',
+  website TEXT DEFAULT 'https://crewly.io',
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -295,11 +295,53 @@ CREATE TRIGGER on_auth_user_created
 -- =====================================================================
 INSERT INTO public.employees (id, name, email, role, department, status, avatar, password)
 VALUES 
-  ('emp-developer-master', 'Developer', 'developer@syncwave.io', 'Admin', 'Engineering', 'active', '', 'developer')
+  ('emp-developer-master', 'Developer', 'developer@crewly.io', 'Admin', 'Engineering', 'active', '', 'developer')
 ON CONFLICT (email) DO UPDATE 
 SET name = EXCLUDED.name, password = EXCLUDED.password, role = EXCLUDED.role, status = 'active';
 
 INSERT INTO public.company_profile (id, name, logo, legal_address, tax_id, contact_email, contact_phone, website)
 VALUES 
-  ('comp-main', 'SYNCWAVE Technologies Inc.', '/logo_mark.png', '742 Evergreen Terrace, San Francisco, CA 94107', 'US-9842104-X', 'contact@syncwave.io', '+1 (555) 234-5678', 'https://syncwave.io')
+  ('comp-main', 'Crewly Technologies Inc.', '/logo.png', '742 Evergreen Terrace, San Francisco, CA 94107', 'US-9842104-X', 'contact@crewly.io', '+1 (555) 234-5678', 'https://crewly.io')
 ON CONFLICT (id) DO NOTHING;
+
+-- =====================================================================
+-- 8. TEAM REAL-TIME CHAT HISTORY SCHEMA
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS public.team_chat (
+  id TEXT PRIMARY KEY DEFAULT ('msg-' || floor(extract(epoch from now()) * 1000)::text),
+  channel TEXT NOT NULL,
+  sender_id TEXT NOT NULL REFERENCES public.employees(id) ON DELETE CASCADE,
+  sender_name TEXT NOT NULL,
+  sender_avatar TEXT,
+  text TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.team_chat ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Chat select policy" ON public.team_chat;
+DROP POLICY IF EXISTS "Chat insert policy" ON public.team_chat;
+
+CREATE POLICY "Chat select policy" ON public.team_chat FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Chat insert policy" ON public.team_chat FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+-- =====================================================================
+-- 9. TEAM CHAT PRIVACY CONNECTIONS SCHEMA
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS public.chat_connections (
+  id TEXT PRIMARY KEY DEFAULT ('conn-' || floor(extract(epoch from now()) * 1000)::text),
+  sender_id TEXT NOT NULL REFERENCES public.employees(id) ON DELETE CASCADE,
+  receiver_id TEXT NOT NULL REFERENCES public.employees(id) ON DELETE CASCADE,
+  status TEXT NOT NULL CHECK (status IN ('pending', 'accepted', 'declined')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(sender_id, receiver_id)
+);
+
+ALTER TABLE public.chat_connections ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Connections select policy" ON public.chat_connections;
+DROP POLICY IF EXISTS "Connections insert/update policy" ON public.chat_connections;
+
+CREATE POLICY "Connections select policy" ON public.chat_connections FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Connections insert/update policy" ON public.chat_connections FOR ALL USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');

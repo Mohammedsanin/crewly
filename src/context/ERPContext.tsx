@@ -10,6 +10,8 @@ import {
   TaskStatus,
   CompanyProfile,
   TaskComment,
+  ChatMessage,
+  ChatConnection,
 } from '../types';
 import {
   syncEmployeesFromSupabase,
@@ -24,6 +26,10 @@ import {
   deleteClientFromSupabase,
   saveCompanyProfileToSupabase,
   syncCompanyProfileFromSupabase,
+  syncChatMessagesFromSupabase,
+  saveChatMessageToSupabase,
+  syncChatConnectionsFromSupabase,
+  saveChatConnectionToSupabase,
 } from '../services/supabaseClient';
 
 interface ERPContextType {
@@ -76,31 +82,42 @@ interface ERPContextType {
   // Recent Activity Log
   recentActivities: { id: string; user: string; action: string; time: string; type: 'task' | 'employee' | 'client' | 'finance' }[];
   clearAllData: () => void;
+
+  // Real-time Chat
+  chatMessages: ChatMessage[];
+  sendChatMessage: (channel: string, text: string) => Promise<void>;
+  syncChatMessages: (channel: string) => Promise<void>;
+  chatChannels: string[];
+  createChatChannel: (channelName: string) => void;
+  chatConnections: ChatConnection[];
+  sendChatRequest: (receiverId: string) => Promise<void>;
+  acceptChatRequest: (connectionId: string) => Promise<void>;
+  declineChatRequest: (connectionId: string) => Promise<void>;
 }
 
 const defaultUser: User = {
   id: 'emp-developer-master',
   name: 'Developer',
-  email: 'developer@syncwave.io',
+  email: 'developer@crewly.io',
   role: 'Admin',
   avatar: '',
 };
 
 const defaultCompany: CompanyProfile = {
-  name: 'SYNCWAVE Technologies Inc.',
-  logo: '/logo_mark.png',
+  name: 'Crewly Technologies Inc.',
+  logo: '/logo.png',
   legalAddress: '742 Evergreen Terrace, San Francisco, CA 94107',
   taxId: 'US-9842104-X',
-  contactEmail: 'contact@syncwave.io',
+  contactEmail: 'contact@crewly.io',
   contactPhone: '+1 (555) 234-5678',
-  website: 'https://syncwave.io',
+  website: 'https://crewly.io',
 };
 
 export const defaultEmployees: Employee[] = [
   {
     id: 'emp-developer-master',
     name: 'Developer',
-    email: 'developer@syncwave.io',
+    email: 'developer@crewly.io',
     role: 'Admin',
     department: 'Engineering',
     joinedDate: '2026-01-01',
@@ -121,7 +138,7 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (
           parsed &&
           parsed.email !== 'saninmohammed03@gmail.com' &&
-          parsed.email !== 'admin@syncwave.io' &&
+          parsed.email !== 'admin@crewly.io' &&
           parsed.name !== 'Sanin' &&
           parsed.name !== 'Saninmohammed03' &&
           parsed.name !== 'Sarah Chen' &&
@@ -152,7 +169,46 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const saved = localStorage.getItem('syncwave_company');
     return saved ? JSON.parse(saved) : defaultCompany;
   });
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => {
+    try {
+      const saved = localStorage.getItem('syncwave_chat_messages');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
 
+  useEffect(() => {
+    localStorage.setItem('syncwave_chat_messages', JSON.stringify(chatMessages));
+  }, [chatMessages]);
+
+  const [chatChannels, setChatChannels] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('syncwave_chat_channels');
+      return saved
+        ? JSON.parse(saved)
+        : ['#general', '#engineering', '#design', '#product', '#operations', '#sales', '#announcements'];
+    } catch (e) {
+      return ['#general', '#engineering', '#design', '#product', '#operations', '#sales', '#announcements'];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('syncwave_chat_channels', JSON.stringify(chatChannels));
+  }, [chatChannels]);
+
+  const [chatConnections, setChatConnections] = useState<ChatConnection[]>(() => {
+    try {
+      const saved = localStorage.getItem('syncwave_chat_connections');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('syncwave_chat_connections', JSON.stringify(chatConnections));
+  }, [chatConnections]);
   const [tasks, setTasks] = useState<Task[]>(() => {
     const saved = localStorage.getItem('syncwave_tasks');
     return saved ? JSON.parse(saved) : [];
@@ -297,6 +353,17 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (remoteCompany && (Date.now() - lastCompUpdated > 15000)) {
         setCompanyInfo(remoteCompany);
       }
+
+      const remoteConns = await syncChatConnectionsFromSupabase();
+      if (remoteConns && remoteConns.length > 0) {
+        setChatConnections((prev) => {
+          const connMap = new Map(prev.map((c) => [c.id, c]));
+          remoteConns.forEach((c) => connMap.set(c.id, c));
+          const merged = Array.from(connMap.values());
+          const isSame = JSON.stringify(prev) === JSON.stringify(merged);
+          return isSame ? prev : merged;
+        });
+      }
     }
 
     loadCloudData();
@@ -313,6 +380,27 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       broadcast.onmessage = (event) => {
         if (event.data === 'SYNC_ERP_DATA') {
           loadCloudData();
+        } else if (event.data && event.data.type === 'NEW_CHAT_MESSAGE') {
+          const newMsg = event.data.payload;
+          setChatMessages((prev) => {
+            if (prev.some((m) => m.id === newMsg.id)) return prev;
+            return [...prev, newMsg];
+          });
+        } else if (event.data && event.data.type === 'NEW_CHAT_CHANNEL') {
+          const newChan = event.data.payload;
+          setChatChannels((prev) => {
+            if (prev.includes(newChan)) return prev;
+            return [...prev, newChan];
+          });
+        } else if (event.data && event.data.type === 'NEW_CHAT_CONNECTION') {
+          const newConn = event.data.payload;
+          setChatConnections((prev) => {
+            const index = prev.findIndex((c) => c.id === newConn.id);
+            if (index > -1) {
+              return prev.map((c) => (c.id === newConn.id ? newConn : c));
+            }
+            return [...prev, newConn];
+          });
         }
       };
     } catch (e) {}
@@ -743,6 +831,112 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
   };
 
+  const syncChatMessages = async (channel: string) => {
+    const remoteMsgs = await syncChatMessagesFromSupabase(channel);
+    if (remoteMsgs) {
+      setChatMessages((prev) => {
+        const msgMap = new Map(prev.map((m) => [m.id, m]));
+        remoteMsgs.forEach((m) => msgMap.set(m.id, m));
+        const merged = Array.from(msgMap.values()).sort(
+          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        return merged;
+      });
+    }
+  };
+
+  const sendChatMessage = async (channel: string, text: string) => {
+    if (!currentUser) return;
+    const newMsg: ChatMessage = {
+      id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      channel,
+      senderId: currentUser.id,
+      senderName: currentUser.name,
+      senderAvatar: currentUser.avatar || '',
+      text,
+      createdAt: new Date().toISOString(),
+    };
+
+    setChatMessages((prev) => [...prev, newMsg]);
+    await saveChatMessageToSupabase(newMsg);
+
+    try {
+      const bc = new BroadcastChannel('syncwave_erp_realtime');
+      bc.postMessage({ type: 'NEW_CHAT_MESSAGE', payload: newMsg });
+      bc.close();
+    } catch (e) {}
+  };
+
+  const createChatChannel = (channelName: string) => {
+    const formatted = channelName.startsWith('#') ? channelName.trim() : `#${channelName.trim()}`;
+    setChatChannels((prev) => {
+      if (prev.includes(formatted)) return prev;
+      const updated = [...prev, formatted];
+      try {
+        const bc = new BroadcastChannel('syncwave_erp_realtime');
+        bc.postMessage({ type: 'NEW_CHAT_CHANNEL', payload: formatted });
+        bc.close();
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  const sendChatRequest = async (receiverId: string) => {
+    if (!currentUser) return;
+    const exists = chatConnections.find(
+      (c) => (c.senderId === currentUser.id && c.receiverId === receiverId) ||
+             (c.senderId === receiverId && c.receiverId === currentUser.id)
+    );
+    if (exists) return;
+
+    const newConn: ChatConnection = {
+      id: `conn-${Date.now()}`,
+      senderId: currentUser.id,
+      receiverId,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+
+    setChatConnections((prev) => [...prev, newConn]);
+    await saveChatConnectionToSupabase(newConn);
+
+    try {
+      const bc = new BroadcastChannel('syncwave_erp_realtime');
+      bc.postMessage({ type: 'NEW_CHAT_CONNECTION', payload: newConn });
+      bc.close();
+    } catch (e) {}
+  };
+
+  const acceptChatRequest = async (connectionId: string) => {
+    const conn = chatConnections.find((c) => c.id === connectionId);
+    if (!conn) return;
+
+    const updated = { ...conn, status: 'accepted' as const };
+    setChatConnections((prev) => prev.map((c) => (c.id === connectionId ? updated : c)));
+    await saveChatConnectionToSupabase(updated);
+
+    try {
+      const bc = new BroadcastChannel('syncwave_erp_realtime');
+      bc.postMessage({ type: 'NEW_CHAT_CONNECTION', payload: updated });
+      bc.close();
+    } catch (e) {}
+  };
+
+  const declineChatRequest = async (connectionId: string) => {
+    const conn = chatConnections.find((c) => c.id === connectionId);
+    if (!conn) return;
+
+    const updated = { ...conn, status: 'declined' as const };
+    setChatConnections((prev) => prev.map((c) => (c.id === connectionId ? updated : c)));
+    await saveChatConnectionToSupabase(updated);
+
+    try {
+      const bc = new BroadcastChannel('syncwave_erp_realtime');
+      bc.postMessage({ type: 'NEW_CHAT_CONNECTION', payload: updated });
+      bc.close();
+    } catch (e) {}
+  };
+
   return (
     <ERPContext.Provider
       value={{
@@ -780,6 +974,15 @@ export const ERPProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         removeToast,
         recentActivities,
         clearAllData,
+        chatMessages,
+        sendChatMessage,
+        syncChatMessages,
+        chatChannels,
+        createChatChannel,
+        chatConnections,
+        sendChatRequest,
+        acceptChatRequest,
+        declineChatRequest,
       }}
     >
       {children}

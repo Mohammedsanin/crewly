@@ -48,7 +48,7 @@ export const SupabaseModal: React.FC<SupabaseModalProps> = ({ isOpen, onClose })
   };
 
   const copySQL = () => {
-    const sql = `-- SYNCWAVE ERP Supabase Migration with New User Auto-Sync Triggers
+    const sql = `-- Crewly ERP Supabase Migration with New User Auto-Sync Triggers
 CREATE TABLE IF NOT EXISTS public.employees (
   id TEXT PRIMARY KEY DEFAULT ('emp-' || floor(extract(epoch from now()) * 1000)::text),
   name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, role TEXT DEFAULT 'Developer',

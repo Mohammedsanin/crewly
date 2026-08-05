@@ -94,7 +94,7 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({ taskId, onCl
 
   const assignedEmp = employees.find((e) => e.name === task.assignedTo);
   const realEmployees = employees.filter(
-    (e) => e.id !== 'emp-developer-master' && e.email !== 'developer@syncwave.io'
+    (e) => e.id !== 'emp-developer-master' && e.email !== 'developer@crewly.io'
   );
 
   const handleQuickReassign = (empName: string) => {
@@ -538,9 +538,9 @@ export const TaskDetailDrawer: React.FC<TaskDetailDrawerProps> = ({ taskId, onCl
                         onChange={(e) => setEditAssignedTo(e.target.value)}
                         className="w-full bg-white border border-slate-200/90 hover:border-indigo-300 rounded-xl px-3.5 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-4 focus:ring-indigo-100/60 transition-all shadow-2xs"
                       >
-                        {employees.filter((e) => e.id !== 'emp-developer-master' && e.email !== 'developer@syncwave.io').length > 0 ? (
+                        {employees.filter((e) => e.id !== 'emp-developer-master' && e.email !== 'developer@crewly.io').length > 0 ? (
                           employees
-                            .filter((e) => e.id !== 'emp-developer-master' && e.email !== 'developer@syncwave.io')
+                            .filter((e) => e.id !== 'emp-developer-master' && e.email !== 'developer@crewly.io')
                             .map((e) => (
                               <option key={e.id} value={e.name}>
                                 {e.name}

@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Employee, Task, Client, CompanyProfile } from '../types';
+import { Employee, Task, Client, CompanyProfile, ChatMessage } from '../types';
 
 export interface SupabaseConfig {
   url: string;
@@ -335,7 +335,7 @@ export const syncCompanyProfileFromSupabase = async (companyId?: string): Promis
     if (error || !data) return null;
     return {
       name: data.name,
-      logo: data.logo || '/logo_mark.png',
+      logo: data.logo || '/logo.png',
       legalAddress: data.legal_address || '',
       taxId: data.tax_id || '',
       contactEmail: data.contact_email || '',
@@ -356,7 +356,7 @@ export const saveCompanyProfileToSupabase = async (profile: CompanyProfile, comp
     const { error } = await client.from('company_profile').upsert({
       id: activeId,
       name: profile.name,
-      logo: profile.logo || '/logo_mark.png',
+      logo: profile.logo || '/logo.png',
       legal_address: profile.legalAddress,
       tax_id: profile.taxId,
       contact_email: profile.contactEmail,
@@ -367,6 +367,97 @@ export const saveCompanyProfileToSupabase = async (profile: CompanyProfile, comp
     return !error;
   } catch (err) {
     console.warn('Supabase save company profile error:', err);
+    return false;
+  }
+};
+
+export const syncChatMessagesFromSupabase = async (channel: string): Promise<ChatMessage[] | null> => {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client
+      .from('team_chat')
+      .select('*')
+      .eq('channel', channel)
+      .order('created_at', { ascending: true });
+    if (error || !data) return null;
+    return data.map((d) => ({
+      id: d.id,
+      channel: d.channel,
+      senderId: d.sender_id,
+      senderName: d.sender_name,
+      senderAvatar: d.sender_avatar || '',
+      text: d.text,
+      createdAt: d.created_at,
+    }));
+  } catch (err) {
+    console.warn('Supabase fetch chat messages fallback:', err);
+    return null;
+  }
+};
+
+export const saveChatMessageToSupabase = async (message: ChatMessage): Promise<boolean> => {
+  const client = getSupabaseClient();
+  if (!client) return false;
+  try {
+    const { error } = await client.from('team_chat').insert({
+      id: message.id,
+      channel: message.channel,
+      sender_id: message.senderId,
+      sender_name: message.senderName,
+      sender_avatar: message.senderAvatar || '',
+      text: message.text,
+      created_at: message.createdAt,
+    });
+    return !error;
+  } catch (err) {
+    console.warn('Supabase save chat message error:', err);
+    return false;
+  }
+};
+
+export interface ChatConnection {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  status: 'pending' | 'accepted' | 'declined';
+  createdAt: string;
+}
+
+export const syncChatConnectionsFromSupabase = async (): Promise<ChatConnection[] | null> => {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  try {
+    const { data, error } = await client.from('chat_connections').select('*');
+    if (error || !data) return null;
+    return data.map((d) => ({
+      id: d.id,
+      senderId: d.sender_id,
+      receiverId: d.receiver_id,
+      status: d.status,
+      createdAt: d.created_at,
+    }));
+  } catch (err) {
+    console.warn('Supabase fetch chat connections error:', err);
+    return null;
+  }
+};
+
+export const saveChatConnectionToSupabase = async (conn: ChatConnection): Promise<boolean> => {
+  const client = getSupabaseClient();
+  if (!client) return false;
+  try {
+    const { error } = await client.from('chat_connections').upsert({
+      id: conn.id,
+      sender_id: conn.senderId,
+      receiver_id: conn.receiverId,
+      status: conn.status,
+      created_at: conn.createdAt,
+      updated_at: new Date().toISOString(),
+    });
+    return !error;
+  } catch (err) {
+    console.warn('Supabase save chat connection error:', err);
     return false;
   }
 };

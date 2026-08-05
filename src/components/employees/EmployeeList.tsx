@@ -24,7 +24,7 @@ export const EmployeeList: React.FC<EmployeeListProps> = ({ onOpenAddEmployeeMod
 
   const filteredEmployees = employees.filter((emp) => {
     // Hide system Developer account from Team Directory
-    if (emp.id === 'emp-developer-master' || emp.email === 'developer@syncwave.io') {
+    if (emp.id === 'emp-developer-master' || emp.email === 'developer@crewly.io') {
       return false;
     }
 

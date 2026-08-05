@@ -16,7 +16,7 @@ export const LoginPage: React.FC = () => {
   const [companyName, setCompanyName] = useState('');
   const [companyWebsite, setCompanyWebsite] = useState('');
   const [companyIndustry, setCompanyIndustry] = useState('Technology');
-  const [companyLogo, setCompanyLogo] = useState('/logo_mark.png');
+  const [companyLogo, setCompanyLogo] = useState('/logo.png');
   const [headName, setHeadName] = useState('');
   const [headEmail, setHeadEmail] = useState('');
   const [headPassword, setHeadPassword] = useState('');
@@ -56,10 +56,10 @@ export const LoginPage: React.FC = () => {
       setIsLoading(false);
       const cleanEmail = email.trim().toLowerCase();
 
-      // Master Developer System Account (Login ID: "developer" or "developer@syncwave.io", Password: "developer")
+      // Master Developer System Account (Login ID: "developer" or "developer@crewly.io", Password: "developer")
       if (
         cleanEmail === 'developer' ||
-        cleanEmail === 'developer@syncwave.io'
+        cleanEmail === 'developer@crewly.io'
       ) {
         if (password.trim() !== 'developer') {
           setErrorMessage('Incorrect password for Developer master account. (Hint: developer)');
@@ -69,7 +69,7 @@ export const LoginPage: React.FC = () => {
         const devUser: User = {
           id: 'emp-developer-master',
           name: 'Developer',
-          email: 'developer@syncwave.io',
+          email: 'developer@crewly.io',
           role: 'Admin',
           avatar: '',
         };
@@ -134,12 +134,12 @@ export const LoginPage: React.FC = () => {
       try {
         const companyDetails = {
           name: companyName.trim(),
-          logo: companyLogo.trim() || '/logo_mark.png',
+          logo: companyLogo.trim() || '/logo.png',
           legalAddress: 'Corporate Headquarters',
           taxId: 'PENDING-TAX-ID',
           contactEmail: headEmail.trim().toLowerCase(),
           contactPhone: '+1 (555) 019-2834',
-          website: companyWebsite.trim() || 'https://syncwave.io',
+          website: companyWebsite.trim() || 'https://crewly.io',
         };
 
         const adminEmployee = {
@@ -195,44 +195,182 @@ export const LoginPage: React.FC = () => {
         className="w-full max-w-4xl bg-white border border-indigo-100/90 rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 relative z-10"
       >
         {/* Left Side Artwork & Brand Section */}
-        <div className="relative p-8 lg:p-12 flex flex-col justify-between bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 text-white border-r border-indigo-100/80 overflow-hidden">
-          {/* Animated Video-like Motion Background */}
-          <div className="absolute inset-0 opacity-60 pointer-events-none overflow-hidden mix-blend-overlay">
-            <motion.img
-              animate={{ scale: [1, 1.18, 1], x: [0, -10, 0], y: [0, 10, 0] }}
-              transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-              src="/login_art.png"
-              alt="SYNCWAVE Dynamic Motion Graphic"
-              className="w-full h-full object-cover scale-110"
-            />
+        <div className="relative p-8 lg:p-12 flex flex-col justify-between bg-gradient-to-br from-slate-50 via-indigo-50/20 to-purple-50/15 text-slate-800 border-r border-slate-100 overflow-hidden">
+          <style dangerouslySetInnerHTML={{__html: `
+            .logo-intro-stage {
+              position: relative;
+              width: 640px;
+              height: 220px;
+              display: flex;
+              align-items: center;
+            }
+            .logo-intro-mark {
+              position: relative;
+              width: 180px;
+              height: 180px;
+              flex-shrink: 0;
+            }
+            .logo-intro-circle {
+              position: absolute;
+              width: 96px;
+              height: 96px;
+              border-radius: 50%;
+              opacity: 0;
+              will-change: transform, opacity;
+            }
+            .logo-intro-c-sage {
+              background: #B8E0C9;
+              top: 10px;
+              left: 42px;
+              animation: logo-intro-flyTop 10s infinite ease-in-out;
+              animation-delay: 0s;
+            }
+            .logo-intro-c-blush {
+              background: #FBCFE8;
+              top: 78px;
+              left: 0px;
+              mix-blend-mode: multiply;
+              animation: logo-intro-flyBotLeft 10s infinite ease-in-out;
+              animation-delay: 0.12s;
+            }
+            .logo-intro-c-lavender {
+              background: #A5B4FC;
+              top: 78px;
+              left: 84px;
+              mix-blend-mode: multiply;
+              animation: logo-intro-flyBotRight 10s infinite ease-in-out;
+              animation-delay: 0.24s;
+            }
+            .logo-intro-word {
+              display: flex;
+              margin-left: 16px;
+            }
+            .logo-intro-word span {
+              display: inline-block;
+              font-size: 64px;
+              font-weight: 700;
+              color: #2E2C3B;
+              opacity: 0;
+              transform: translateY(10px);
+              animation: logo-intro-letterFade 10s infinite ease-out;
+            }
+            .logo-intro-word span:nth-child(1){ animation-delay: 0s; }
+            .logo-intro-word span:nth-child(2){ animation-delay: 0.05s; }
+            .logo-intro-word span:nth-child(3){ animation-delay: 0.10s; }
+            .logo-intro-word span:nth-child(4){ animation-delay: 0.15s; }
+            .logo-intro-word span:nth-child(5){ animation-delay: 0.20s; }
+            .logo-intro-word span:nth-child(6){ animation-delay: 0.25s; }
+
+            .logo-intro-tagline {
+              position: absolute;
+              left: 212px;
+              bottom: 18px;
+              font-size: 17px;
+              font-weight: 500;
+              color: #8B8A99;
+              letter-spacing: 0.3px;
+              opacity: 0;
+              transform: translateY(6px);
+              animation: logo-intro-tagFade 10s infinite ease-out;
+            }
+
+            @keyframes logo-intro-flyTop {
+              0%, 2%   { opacity: 0; transform: translate(0, -150px) scale(0.4); }
+              22%      { opacity: 1; transform: translate(0, 0) scale(1.1); }
+              26%      { transform: translate(0, 0) scale(1); }
+              34%      { transform: scale(1.045); }
+              42%      { transform: scale(1); }
+              50%      { transform: scale(1.045); }
+              58%      { transform: scale(1); }
+              66%      { transform: scale(1.045); }
+              74%      { transform: scale(1); }
+              82%      { opacity: 1; transform: translate(0, 0) scale(1); }
+              90%      { opacity: 0; transform: translate(0, -90px) scale(0.7); }
+              100%     { opacity: 0; transform: translate(0, -150px) scale(0.4); }
+            }
+            @keyframes logo-intro-flyBotLeft {
+              0%, 2%   { opacity: 0; transform: translate(-160px, 130px) scale(0.4); }
+              22%      { opacity: 1; transform: translate(0, 0) scale(1.1); }
+              26%      { transform: translate(0, 0) scale(1); }
+              34%      { transform: scale(1.045); }
+              42%      { transform: scale(1); }
+              50%      { transform: scale(1.045); }
+              58%      { transform: scale(1); }
+              66%      { transform: scale(1.045); }
+              74%      { transform: scale(1); }
+              82%      { opacity: 1; transform: translate(0, 0) scale(1); }
+              90%      { opacity: 0; transform: translate(-96px, 78px) scale(0.7); }
+              100%     { opacity: 0; transform: translate(-160px, 130px) scale(0.4); }
+            }
+            @keyframes logo-intro-flyBotRight {
+              0%, 2%   { opacity: 0; transform: translate(160px, 130px) scale(0.4); }
+              22%      { opacity: 1; transform: translate(0, 0) scale(1.1); }
+              26%      { transform: translate(0, 0) scale(1); }
+              34%      { transform: scale(1.045); }
+              42%      { transform: scale(1); }
+              50%      { transform: scale(1.045); }
+              58%      { transform: scale(1); }
+              66%      { transform: scale(1.045); }
+              74%      { transform: scale(1); }
+              82%      { opacity: 1; transform: translate(0, 0) scale(1); }
+              90%      { opacity: 0; transform: translate(96px, 78px) scale(0.7); }
+              100%     { opacity: 0; transform: translate(160px, 130px) scale(0.4); }
+            }
+            @keyframes logo-intro-letterFade {
+              0%, 15%  { opacity: 0; transform: translateY(10px); }
+              19%      { opacity: 1; transform: translateY(0); }
+              82%      { opacity: 1; transform: translateY(0); }
+              88%, 100%{ opacity: 0; transform: translateY(-10px); }
+            }
+            @keyframes logo-intro-tagFade {
+              0%, 28%  { opacity: 0; transform: translateY(6px); }
+              32%      { opacity: 1; transform: translateY(0); }
+              82%      { opacity: 1; transform: translateY(0); }
+              88%, 100%{ opacity: 0; transform: translateY(-6px); }
+            }
+          `}} />
+
+          {/* Loop Logo Animation Stage Background */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none opacity-45">
+            <div className="logo-intro-stage scale-75 md:scale-90 lg:scale-100">
+              <div className="logo-intro-mark">
+                <div className="logo-intro-circle logo-intro-c-sage"></div>
+                <div className="logo-intro-circle logo-intro-c-blush"></div>
+                <div className="logo-intro-circle logo-intro-c-lavender"></div>
+              </div>
+              <div className="logo-intro-word">
+                <span>C</span><span>r</span><span>e</span><span>w</span><span>l</span><span>y</span>
+              </div>
+              <div className="logo-intro-tagline">day-to-day, together</div>
+            </div>
           </div>
 
           <div className="relative z-10 space-y-4">
             <div className="flex items-center gap-3">
               <motion.div
                 whileHover={{ scale: 1.1, rotate: -5 }}
-                className="w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-2 flex items-center justify-center shadow-lg cursor-pointer"
+                className="w-11 h-11 rounded-2xl bg-white/70 backdrop-blur-md border border-indigo-150/40 p-2 flex items-center justify-center shadow-xs cursor-pointer"
               >
-                <img src="/logo_mark.png" alt="Logo" className="w-full h-full object-contain filter brightness-110" />
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
               </motion.div>
-              <span className="text-xl font-black text-white tracking-tight">SYNCWAVE ERP</span>
+              <span className="text-xl font-black text-slate-800 tracking-tight">Crewly ERP</span>
             </div>
 
             <motion.div
               initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.15 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-indigo-200 text-xs font-extrabold"
+              className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-indigo-50/80 backdrop-blur-md border border-indigo-100 text-indigo-700 text-xs font-extrabold"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" />
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600 animate-spin" />
               <span>Enterprise Intelligent Workspace</span>
             </motion.div>
 
             <motion.h2
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-2xl lg:text-3xl font-black text-white tracking-tight leading-snug drop-shadow-sm"
+              transition={{ delay: 0.25 }}
+              className="text-2xl lg:text-3xl font-black text-slate-800 tracking-tight leading-snug"
             >
               Streamline enterprise operations with intelligent UI.
             </motion.h2>
@@ -240,15 +378,15 @@ export const LoginPage: React.FC = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="text-xs lg:text-sm text-indigo-100/90 leading-relaxed font-medium"
+              className="text-xs lg:text-sm text-slate-500 leading-relaxed font-medium"
             >
               Setup your custom workspace or log in with Master Admin/employee credentials.
             </motion.p>
           </div>
 
-          <div className="relative z-10 pt-8 border-t border-white/10 flex items-center justify-between text-xs text-indigo-200 font-medium">
-            <span>© 2026 SYNCWAVE Inc.</span>
-            <span className="flex items-center gap-1 text-emerald-400 font-extrabold">
+          <div className="relative z-10 pt-8 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-500 font-medium">
+            <span>© 2026 Crewly Inc.</span>
+            <span className="flex items-center gap-1 text-emerald-600 font-extrabold">
               <Shield className="w-3.5 h-3.5" />
               SOC2 Type II Verified
             </span>
@@ -287,7 +425,7 @@ export const LoginPage: React.FC = () => {
                       <input
                         type="text"
                         required
-                        placeholder="admin@syncwave.io"
+                        placeholder="admin@crewly.io"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-3.5 py-2.5 text-xs text-slate-800 font-semibold focus:outline-none focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100/60 transition-all"
@@ -310,16 +448,7 @@ export const LoginPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Master Developer Login Hint Box */}
-                  <div className="p-3.5 rounded-2xl bg-indigo-50/80 border border-indigo-100 text-[11px] text-indigo-900 space-y-1 font-medium shadow-xs">
-                    <span className="font-extrabold block text-indigo-950 flex items-center gap-1.5">
-                      <Key className="w-3.5 h-3.5 text-indigo-600" />
-                      <span>Super-Admin Master Access:</span>
-                    </span>
-                    <p>Login ID: <strong className="font-mono text-indigo-700">developer</strong> (or <strong className="font-mono text-indigo-700">developer@syncwave.io</strong>)</p>
-                    <p>Password: <strong className="font-mono text-indigo-700">developer</strong></p>
-                    <p className="text-[10px] text-indigo-600 font-semibold pt-0.5">Created employees can log in using their own email/name and password.</p>
-                  </div>
+
 
                   <div className="space-y-3 pt-2">
                     <motion.button

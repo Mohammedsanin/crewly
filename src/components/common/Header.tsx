@@ -120,6 +120,8 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
+
+
         {/* Notification Bell Pill */}
         <div className="relative shrink-0">
           <button

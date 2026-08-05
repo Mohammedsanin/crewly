@@ -14,7 +14,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose }) =
   const { addTask, employees, clients, currentUser } = useERP();
 
   const realEmployees = employees.filter(
-    (e) => e.id !== 'emp-developer-master' && e.email !== 'developer@syncwave.io'
+    (e) => e.id !== 'emp-developer-master' && e.email !== 'developer@crewly.io'
   );
 
   const [title, setTitle] = useState('');
@@ -29,7 +29,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose }) =
   React.useEffect(() => {
     if (isOpen) {
       const activeList = employees.filter(
-        (e) => e.id !== 'emp-developer-master' && e.email !== 'developer@syncwave.io'
+        (e) => e.id !== 'emp-developer-master' && e.email !== 'developer@crewly.io'
       );
       if (activeList.length > 0 && !assignedTo) {
         setAssignedTo(activeList[0].name);

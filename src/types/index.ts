@@ -85,3 +85,21 @@ export interface User {
   role: 'Admin' | 'Manager' | 'Developer';
   avatar: string;
 }
+
+export interface ChatMessage {
+  id: string;
+  channel: string;
+  senderId: string;
+  senderName: string;
+  senderAvatar?: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface ChatConnection {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  status: 'pending' | 'accepted' | 'declined';
+  createdAt: string;
+}

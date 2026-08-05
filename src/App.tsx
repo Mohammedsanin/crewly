@@ -25,6 +25,7 @@ import { AIAssistantDrawer } from './components/ai/AIAssistantDrawer';
 import { LoginPage } from './components/auth/LoginPage';
 
 import { SupabaseModal } from './components/common/SupabaseModal';
+import { TeamChatDrawer } from './components/chat/TeamChatDrawer';
 
 const ERPAppContent: React.FC = () => {
   const {
@@ -44,6 +45,7 @@ const ERPAppContent: React.FC = () => {
   const [isNaturalTaskOpen, setIsNaturalTaskOpen] = useState(false);
   const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false);
   const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   if (!currentUser) {
     return <LoginPage />;
@@ -64,7 +66,7 @@ const ERPAppContent: React.FC = () => {
       />
 
       {/* Sidebar Navigation */}
-      <Sidebar onOpenAIAssistant={() => setIsAIAssistantOpen(true)} />
+      <Sidebar onOpenAIAssistant={() => setIsAIAssistantOpen(true)} onOpenChat={() => setIsChatOpen(true)} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative z-10">
@@ -118,6 +120,9 @@ const ERPAppContent: React.FC = () => {
 
       {/* AI Assistant Drawer */}
       <AIAssistantDrawer isOpen={isAIAssistantOpen} onClose={() => setIsAIAssistantOpen(false)} />
+
+      {/* Team Chat Drawer */}
+      <TeamChatDrawer isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
 
       {/* Natural Task AI Modal */}
       <NaturalTaskCreatorModal isOpen={isNaturalTaskOpen} onClose={() => setIsNaturalTaskOpen(false)} />

@@ -107,7 +107,7 @@ export const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({ onOpenSu
 
   const handleExportPendingTasks = () => {
     const pending = tasks.filter((t) => t.status !== 'done');
-    downloadJSON(`syncwave-pending-tasks-${Date.now()}.json`, {
+    downloadJSON(`crewly-pending-tasks-${Date.now()}.json`, {
       exportTimestamp: new Date().toISOString(),
       pendingCount: pending.length,
       tasks: pending,
@@ -134,7 +134,7 @@ export const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({ onOpenSu
         startDate: c.startDate,
       })),
     };
-    downloadJSON(`syncwave-financial-report-${Date.now()}.json`, financialReport);
+    downloadJSON(`crewly-financial-report-${Date.now()}.json`, financialReport);
     addToast({
       type: 'success',
       title: 'Financial Report Exported',
@@ -151,7 +151,7 @@ export const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({ onOpenSu
       employees,
       recentActivities,
     };
-    downloadJSON(`syncwave-full-backup-${Date.now()}.json`, backup);
+    downloadJSON(`crewly-full-backup-${Date.now()}.json`, backup);
     addToast({
       type: 'success',
       title: 'Complete ERP Backup Downloaded',
@@ -182,7 +182,7 @@ export const CompanyProfileView: React.FC<CompanyProfileViewProps> = ({ onOpenSu
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-indigo-600/10 border border-indigo-500/30 p-2 flex items-center justify-center overflow-hidden">
-              <img src={companyInfo.logo || "/logo_mark.png"} alt="Company Logo" className="w-full h-full object-contain" />
+              <img src={companyInfo.logo || "/logo.png"} alt="Company Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight">

@@ -38,7 +38,7 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({ isOpen, on
     {
       id: 'msg-1',
       sender: 'assistant',
-      text: 'Hello! I am your SYNCWAVE AI assistant. Ask me anything about overdue deliverables, team workload, or client accounts.',
+      text: 'Hello! I am your Crewly AI assistant. Ask me anything about overdue deliverables, team workload, or client accounts.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -108,7 +108,7 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({ isOpen, on
     const text = msg.text;
 
     // Detect message types for micro-widget rendering
-    const isGreeting = text.includes('Hello! I am your SYNCWAVE AI assistant') || text.includes('Hello! I am your SYNCWAVE AI Assistant');
+    const isGreeting = text.includes('Hello! I am your Crewly AI assistant') || text.includes('Hello! I am your Crewly AI Assistant') || text.includes('Hello! I am your SYNCWAVE AI assistant') || text.includes('Hello! I am your SYNCWAVE AI Assistant');
     const isSummary = text.includes('summary of the company workspace') || text.includes('Active Deliverables');
     const isOverdueList = text.includes('overdue tasks') || text.includes('urgent or overdue tasks');
     const isTeamWorkload = text.includes('team members') || text.includes('active deliverables') || text.includes('active engineer');
@@ -120,12 +120,12 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({ isOpen, on
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-indigo-600 font-extrabold text-xs tracking-wider">
             <Sparkles className="w-4.5 h-4.5 animate-pulse text-indigo-500" />
-            <span>SyncWave Assistant Online</span>
+            <span>Crewly Assistant Online</span>
           </div>
           
           <div className="space-y-2">
             <p className="text-xs font-semibold text-slate-800 leading-relaxed">
-              Hello! I am your SYNCWAVE AI assistant. I can help you monitor workload, track client projects, locate overdue tasks, or navigate your workspace.
+              Hello! I am your Crewly AI assistant. I can help you monitor workload, track client projects, locate overdue tasks, or navigate your workspace.
             </p>
             <div className="space-y-1.5 pt-1">
               <div className="flex items-center gap-2 text-[11px] text-slate-600">
@@ -170,7 +170,7 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({ isOpen, on
       return (
         <div className="space-y-4">
           <p className="font-semibold text-slate-800 leading-relaxed">
-            Here is your live SyncWave workspace state:
+            Here is your live Crewly workspace state:
           </p>
           
           <div className="grid grid-cols-2 gap-2.5">
@@ -504,7 +504,7 @@ export const AIAssistantDrawer: React.FC<AIAssistantDrawerProps> = ({ isOpen, on
                   <Sparkles className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-slate-800 tracking-wide uppercase">SYNCWAVE AI Copilot</h3>
+                  <h3 className="text-xs font-bold text-slate-800 tracking-wide uppercase">Crewly AI Copilot</h3>
                   <span className="text-[9px] text-indigo-600 font-bold tracking-wider flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
                     Gemini 2.5 Active

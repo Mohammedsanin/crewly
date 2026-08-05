@@ -374,14 +374,7 @@ export const LoginPage: React.FC = () => {
             >
               Streamline enterprise operations with intelligent UI.
             </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="text-xs lg:text-sm text-slate-500 leading-relaxed font-medium"
-            >
-              Setup your custom workspace or log in with Master Admin/employee credentials.
-            </motion.p>
+
           </div>
 
           <div className="relative z-10 pt-8 border-t border-slate-200/60 flex items-center justify-between text-xs text-slate-500 font-medium">

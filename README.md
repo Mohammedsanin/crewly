@@ -22,6 +22,10 @@ A modern, highly aesthetic, real-time enterprise management platform and team co
 📅 Timeline View (Gantt Chart):
 - **Gantt Deliverables Range**: Interactive horizontal calendar charts displaying task duration ranges, active progression tracks, and assignees.
 
+🤖 Crewly AI Copilot & Natural Task Intelligence:
+- **Gemini 2.5 Assistant Integration**: An active side drawer powered by Gemini 2.5 that queries live workspace metrics, workloads, and task states.
+- **Natural Language Workspace Parsing**: Ask the copilot to naturally locate overdue deliverables, compile client reports, audit active developer schedules, or answer general workflow queries.
+
 📁 Repository Structure
 
 ```
